@@ -1,3 +1,16 @@
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }
+  }
+}
+
+provider "azurerm" {
+  features {}
+}
+
 #
 # Configuración del Laboratorio de Azure
 # Despliega un App Service accesible solo desde una red privada
@@ -85,3 +98,6 @@ resource "random_string" "random" {
   upper   = false
   special = false
 }
+
+```eof
+Haz un `commit` de este cambio en tu repositorio. Esto iniciará un nuevo intento de despliegue que debería superar este error. ¡Ya estamos muy cerca de tener tu laboratorio en Azure funcionando!
