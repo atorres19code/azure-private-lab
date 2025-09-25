@@ -40,8 +40,8 @@ resource "azurerm_app_service_plan" "asp" {
   resource_group_name = azurerm_resource_group.rg.name
   kind                = "Linux"
   sku {
-    tier = "Basic"
-    size = "B1"
+    tier = "Free"
+    size = "F1"
   }
 }
 
