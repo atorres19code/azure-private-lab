@@ -99,5 +99,5 @@ resource "random_string" "random" {
   special = false
 }
 
-```eof
-Haz un `commit` de este cambio en tu repositorio. Esto iniciará un nuevo intento de despliegue que debería superar este error. ¡Ya estamos muy cerca de tener tu laboratorio en Azure funcionando!
+
+Una vez que hayas actualizado el archivo con este código, haz un nuevo **commit**. GitHub Actions se activará de nuevo, y esta vez, ¡el despliegue debería funcionar sin problemas!
