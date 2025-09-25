@@ -11,6 +11,10 @@ provider "azurerm" {
   features {}
 }
 
+#
+# Configuración del Laboratorio de Azure
+# Despliega un App Service accesible solo desde una red privada
+#
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
@@ -35,6 +39,7 @@ resource "azurerm_app_service_plan" "asp" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   kind                = "Linux"
+  reserved            = true
   sku {
     tier = "Free"
     size = "F1"
@@ -42,7 +47,7 @@ resource "azurerm_app_service_plan" "asp" {
 }
 
 resource "azurerm_app_service" "app_service" {
-  name                = "private-webapp-${random_string.random.result}" # Nombre único
+  name                = "private-webapp-${random_string.random.result}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.asp.id
@@ -58,6 +63,7 @@ resource "azurerm_private_endpoint" "private_endpoint" {
   resource_group_name = azurerm_resource_group.rg.name
   subnet_id           = azurerm_subnet.subnet.id
 
+  # Conexión al servicio de App Service
   private_service_connection {
     name                           = "app-service-connection"
     is_manual_connection           = false
@@ -66,6 +72,7 @@ resource "azurerm_private_endpoint" "private_endpoint" {
   }
 }
 
+# La zona DNS privada es necesaria para que el VNet pueda resolver el FQDN del App Service a su IP privada
 resource "azurerm_private_dns_zone" "dns_zone" {
   name                = "privatelink.azurewebsites.net"
   resource_group_name = azurerm_resource_group.rg.name
@@ -86,6 +93,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
   virtual_network_id    = azurerm_virtual_network.vnet.id
 }
 
+# Recurso para generar un nombre único para la app service
 resource "random_string" "random" {
   length  = 8
   upper   = false
