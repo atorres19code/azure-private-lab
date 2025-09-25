@@ -11,10 +11,6 @@ provider "azurerm" {
   features {}
 }
 
-#
-# Configuración del Laboratorio de Azure
-# Despliega un App Service accesible solo desde una red privada
-#
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
@@ -51,7 +47,7 @@ resource "azurerm_app_service" "app_service" {
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.asp.id
   site_config {
-    linux_fx_version = "NODE|18-lts" # Puedes cambiar esto por la pila que necesites (ej. "DOTNET|6.0", "PYTHON|3.9")
+    linux_fx_version = "NODE|18-lts"
   }
   https_only = true
 }
@@ -62,7 +58,6 @@ resource "azurerm_private_endpoint" "private_endpoint" {
   resource_group_name = azurerm_resource_group.rg.name
   subnet_id           = azurerm_subnet.subnet.id
 
-  # Conexión al servicio de App Service
   private_service_connection {
     name                           = "app-service-connection"
     is_manual_connection           = false
@@ -71,7 +66,6 @@ resource "azurerm_private_endpoint" "private_endpoint" {
   }
 }
 
-# La zona DNS privada es necesaria para que el VNet pueda resolver el FQDN del App Service a su IP privada
 resource "azurerm_private_dns_zone" "dns_zone" {
   name                = "privatelink.azurewebsites.net"
   resource_group_name = azurerm_resource_group.rg.name
@@ -92,11 +86,8 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
   virtual_network_id    = azurerm_virtual_network.vnet.id
 }
 
-# Recurso para generar un nombre único para la app service
 resource "random_string" "random" {
   length  = 8
   upper   = false
   special = false
 }
-
-Una vez que el despliegue sea exitoso, te proporcionaré el último cambio necesario para reactivar el backend. ¡Con este paso, tu laboratorio estará listo para funcionar!
