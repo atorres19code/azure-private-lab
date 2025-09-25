@@ -7,5 +7,5 @@ variable "resource_group_name" {
 variable "location" {
   description = "La región de Azure para desplegar los recursos."
   type        = string
-  default     = "eastus"
+  default     = "Mexico Central"
 }
