@@ -1,8 +1,3 @@
-### **2. `variables.tf`**
-
-Este archivo contiene las variables que puedes modificar para personalizar el despliegue.
-
-```terraform:Variables:variables.tf
 variable "resource_group_name" {
   description = "El nombre del grupo de recursos de Azure."
   type        = string
@@ -14,6 +9,3 @@ variable "location" {
   type        = string
   default     = "eastus"
 }
-
-```eof
----
