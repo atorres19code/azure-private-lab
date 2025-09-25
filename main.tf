@@ -98,6 +98,3 @@ resource "random_string" "random" {
   upper   = false
   special = false
 }
-
-
-Una vez que hayas actualizado el archivo con este código, haz un nuevo **commit**. GitHub Actions se activará de nuevo, y esta vez, ¡el despliegue debería funcionar sin problemas!
