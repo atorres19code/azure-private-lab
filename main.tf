@@ -19,14 +19,6 @@ resource "azurerm_subnet" "subnet" {
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["10.0.1.0/24"]
-  # Habilita la delegación para el Private Endpoint
-  delegation {
-    name = "delegation"
-    service_delegation {
-      name    = "Microsoft.Web/serverfarms"
-      actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
-    }
-  }
 }
 
 resource "azurerm_app_service_plan" "asp" {
@@ -41,12 +33,12 @@ resource "azurerm_app_service_plan" "asp" {
 }
 
 resource "azurerm_app_service" "app_service" {
-  name                = "private-webapp-${random_string.random.result}"
+  name                = "private-webapp-${random_string.random.result}" # Nombre único
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.asp.id
   site_config {
-    linux_fx_version = "NODE|18-lts"
+    linux_fx_version = "NODE|18-lts" # Puedes cambiar esto por la pila que necesites (ej. "DOTNET|6.0", "PYTHON|3.9")
   }
   https_only = true
 }
