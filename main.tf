@@ -5,13 +5,6 @@ terraform {
       version = "~> 3.0"
     }
   }
-
-  backend "azurerm" {
-    resource_group_name  = "private-lab-rg"
-    storage_account_name = "tfstatelabore"
-    container_name       = "tfstate"
-    key                  = "terraform.tfstate"
-  }
 }
 
 provider "azurerm" {
@@ -105,3 +98,5 @@ resource "random_string" "random" {
   upper   = false
   special = false
 }
+
+Una vez que el despliegue sea exitoso, te proporcionaré el último cambio necesario para reactivar el backend. ¡Con este paso, tu laboratorio estará listo para funcionar!
