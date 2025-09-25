@@ -12,8 +12,8 @@ provider "azurerm" {
 }
 
 #
-# Configuración del Laboratorio de Azure
-# Despliega un App Service accesible solo desde una red privada
+# Azure Lab Configuration
+# Deploys an App Service accessible only from a private network
 #
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
@@ -63,7 +63,7 @@ resource "azurerm_private_endpoint" "private_endpoint" {
   resource_group_name = azurerm_resource_group.rg.name
   subnet_id           = azurerm_subnet.subnet.id
 
-  # Conexión al servicio de App Service
+  # Connection to the App Service
   private_service_connection {
     name                           = "app-service-connection"
     is_manual_connection           = false
@@ -71,13 +71,17 @@ resource "azurerm_private_endpoint" "private_endpoint" {
     subresource_names              = ["sites"]
   }
 
+  # Explicit dependency to ensure the App Service is created first
   depends_on = [azurerm_app_service.app_service]
 }
 
-# La zona DNS privada es necesaria para que el VNet pueda resolver el FQDN del App Service a su IP privada
+# Private DNS zone is required for the VNet to resolve the App Service's FQDN to its private IP
 resource "azurerm_private_dns_zone" "dns_zone" {
   name                = "privatelink.azurewebsites.net"
   resource_group_name = azurerm_resource_group.rg.name
+
+  # Explicit dependency on the Resource Group creation
+  depends_on = [azurerm_resource_group.rg]
 }
 
 resource "azurerm_private_dns_a_record" "dns_a_record" {
@@ -86,7 +90,9 @@ resource "azurerm_private_dns_a_record" "dns_a_record" {
   resource_group_name = azurerm_resource_group.rg.name
   ttl                 = 300
   records             = [azurerm_private_endpoint.private_endpoint.private_service_connection[0].private_ip_address]
-  depends_on          = [azurerm_private_endpoint.private_endpoint]
+
+  # Explicit dependency on the Private Endpoint creation
+  depends_on = [azurerm_private_endpoint.private_endpoint]
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
@@ -95,10 +101,11 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vnet_link" {
   private_dns_zone_name = azurerm_private_dns_zone.dns_zone.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
 
+  # Explicit dependency on the Private DNS Zone creation
   depends_on = [azurerm_private_dns_zone.dns_zone]
 }
 
-# Recurso para generar un nombre único para la app service
+# Resource to generate a unique name for the app service
 resource "random_string" "random" {
   length  = 8
   upper   = false
